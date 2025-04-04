@@ -11,7 +11,8 @@ make omp     # OpenMP version (macOS-safe)
 
 ## Run
 ```bash
-./blocked_matmul 1024              # run single-threaded with 1024x1024 matrix
+./blocked_matmul 1024              # run single-threaded with 1024x1024 matrix 
+./blocked_matmul 1024  perf.csv    # run single-threaded with 1024x1024 matrix + write results to CSV
 ./blocked_matmul_omp 1024 perf.csv # run OpenMP version + write results to CSV
 ```
 ## Output
