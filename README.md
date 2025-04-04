@@ -1,7 +1,9 @@
 # Blocked Matrix Multiplication Optimizer
 
-Compare single-threaded and OpenMP-parallelized blocked matrix multiplication using different block sizes.
+A cache-efficient, blocked matrix multiplication algorithm in C, with optional OpenMP parallelization.
+It allows benchmarking across different block sizes to analyze performance impacts based on CPU cache behavior.
 
+Compare single-threaded and OpenMP-parallelized blocked matrix multiplication using different block sizes.
 ## Build
 
 ```bash
