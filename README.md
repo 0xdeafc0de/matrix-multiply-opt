@@ -17,26 +17,42 @@ make omp     # OpenMP version (macOS-safe)
 ```
 ## Output
 ```bash
+~/matrix-multiply-opt > ./blocked_matmul 1024
 Testing block sizes (matrix size: 1024 x 1024):
 BlockSize	Time (ms)
 -----------------------------
-4         	343.50
-8         	322.85
-16        	305.89
-32        	358.36
-64        	570.44
-128       	804.72
+4         	345.65
+8         	308.12
+16        	306.62
+32        	355.95
+64        	560.61
+128       	812.95
+~/matrix-multiply-opt >
+
+~/matrix-multiply-opt > ./blocked_matmul_omp 1024
+Using 12 OpenMP threads
+Testing block sizes (matrix size: 1024 x 1024):
+BlockSize	Time (ms)
+-----------------------------
+4         	64.14
+8         	44.13
+16        	47.04
+32        	53.34
+64        	87.58
+128       	122.82
+~/matrix-multiply-opt >
+
 ```
 ## CSV file (when option provide)
 ```bash
 $ cat out.csv 
 block_size,time_ms
-4,343.50
-8,322.85
-16,305.89
-32,358.36
-64,570.44
-128,804.72
+4,345.65
+8,308.12
+16,306.62
+32,355.95
+64,560.61
+128,812.95
 ```
 
 ## Requirements
