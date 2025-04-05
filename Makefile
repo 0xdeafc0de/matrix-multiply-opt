@@ -16,7 +16,7 @@ ifeq ($(UNAME_S), Darwin)
 else
 	OMP_FLAGS = -fopenmp -DUSE_OPENMP
 	OMP_LDFLAGS = -fopenmp
-	CC = clang
+	CC = gcc
 endif
 
 all: $(TARGET)
