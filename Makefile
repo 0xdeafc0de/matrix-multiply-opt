@@ -1,7 +1,6 @@
 # Detect OS
 UNAME_S := $(shell uname -s)
 
-CC = clang
 CFLAGS = -O3 -Wall
 LDFLAGS = -lm
 SRC = blocked_matmul.c
@@ -13,9 +12,11 @@ ifeq ($(UNAME_S), Darwin)
 	OMP_LIB = -L/opt/homebrew/opt/libomp/lib
 	OMP_FLAGS = -Xpreprocessor -fopenmp -DUSE_OPENMP $(OMP_INCLUDE)
 	OMP_LDFLAGS = $(OMP_LIB) -lomp
+	CC = clang
 else
-	OMP_CFLAGS = -fopenmp -DUSE_OPENMP
+	OMP_FLAGS = -fopenmp -DUSE_OPENMP
 	OMP_LDFLAGS = -fopenmp
+	CC = clang
 endif
 
 all: $(TARGET)
