@@ -74,18 +74,37 @@ void blocked_matrix_multiply(float** A, float** B, float** C, int n, int block_s
     }
 }
 
+// Normal Matrix multiplication: C = A * B
+void matrix_multiply(float** A, float** B, float** C, int n) {
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            float sum = 0.0f;
+            for (int k = 0; k < n; k++) {
+                sum += A[i][k] * B[k][j];
+            }
+            C[i][j] = sum;
+        }
+    }
+}
+
 void print_usage(const char* prog) {
-    printf("Usage: %s <matrix_size> [csv_output_file]\n", prog);
-    printf("Example: %s 1024 perf.csv\n", prog);
+    printf("\tUsage: %s <matrix_size> <block_size> [csv_output_file]\n", prog);
+    printf("\t\tBlock size can be 0 for doing matrix multiplications without tiling/blocking\n");
+    printf("\t\tIf you want to find optimal block size, use block_size -1. It will run matrix multiplication with various block sizes\n");
+    printf("\tExamples:\n");
+    printf("\t%s 1024 16\n", prog);
+    printf("\t%s 1024 0\n", prog);
+    printf("\t%s 1024 -1 perf.csv\n", prog);
 }
 
 int main(int argc, char* argv[]) {
-    if (argc < 2) {
+    if (argc < 3) {
         print_usage(argv[0]);
         return 1;
     }
     int n = atoi(argv[1]);
-    const char* csv_file = argc >= 3 ? argv[2] : NULL;
+    int block_size = atoi(argv[2]);
+    const char* csv_file = argc >= 4 ? argv[3] : NULL;
 
     FILE* csv = NULL;
     if (csv_file) {
@@ -109,16 +128,27 @@ int main(int argc, char* argv[]) {
 #ifdef USE_OPENMP
     printf("Using %d OpenMP threads\n", omp_get_max_threads());
 #endif
-    printf("Testing block sizes (matrix size: %d x %d):\n", n, n);
+    printf("Testing matrix size: %d x %d:\n", n, n);
     printf("BlockSize\tTime (ms)\n");
     printf("-----------------------------\n");
 
-    for (int block_size = MIN_BLOCK; block_size <= MAX_BLOCK; block_size *= 2) {
+    int single_run = 0;
+    if (block_size >= 0) {
+        single_run = 1;
+    } else {
+        block_size = MIN_BLOCK;
+    }
+
+    while (block_size <= MAX_BLOCK) {
         zero_matrix(C, n);
         struct timespec start, end;
         clock_gettime(CLOCK_MONOTONIC, &start);
 
-        blocked_matrix_multiply(A, B, C, n, block_size);
+        if (block_size == 0) {
+            matrix_multiply(A, B, C, n);
+        } else {
+            blocked_matrix_multiply(A, B, C, n, block_size);
+        }
 
         clock_gettime(CLOCK_MONOTONIC, &end);
         long elapsed_ns = time_diff_ns(start, end);
@@ -128,6 +158,13 @@ int main(int argc, char* argv[]) {
         if (csv) {
             fprintf(csv, "%d,%.2f\n", block_size, time_ms);
         }
+
+        if (single_run > 0) {
+            break;
+        }
+
+        // Next block size
+        block_size *= 2;
     }
 
     if (csv) {
