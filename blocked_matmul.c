@@ -8,11 +8,11 @@
 /*
  * Logic to Choose Max Block Size (e.g. with L1 data cache size of 32 KB)
  *   Each float is 4 bytes, so:
- *     * 1 block of size B x B = B^2 * 4 bytes
- *     * 3 blocks = 3 * B^2 * 4 <= 32 * 1024 bytes
- *     * B <= sqrt((32*1024)/(3*4))
- *     * B <= 52
- *
+ *     * 1 block of size B x B = (4B)^2 bytes Or 16B^2 bytes
+ *     * 3 blocks = 3*16B^2 <= 32 * 1024 bytes
+ *     * B <= sqrt((32*1024)/(48))
+ *     * B <= 26
+ *     * A block size of 16 will optimally fir into the cache.
  */
 
 #define MAX_BLOCK 128     // Max block size to test
